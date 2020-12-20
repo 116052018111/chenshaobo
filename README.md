@@ -2,6 +2,7 @@
 ## 时间戳
 ### 代码
 #### 在noteslist_item.xml中加入一个TextView
+...
 <TextView
         android:id="@+id/text2"
         android:layout_width="match_parent"
@@ -10,3 +11,4 @@
         android:singleLine="true"
         android:gravity="center_vertical"
     />
+...
