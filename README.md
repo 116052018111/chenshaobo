@@ -141,3 +141,101 @@ public class NoteSearch extends Activity implements SearchView.OnQueryTextListen
 ![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220212453.png)
 ![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220212508.png)
 ![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220212613.png)
+
+## UI界面美化and更换背景颜色
+### 关键代码
+##### NotePad.java 中设置颜色编号
+```
+public static final String COLUMN_NAME_BACK_COLOR = "color";
+public static final int DEFAULT_COLOR = 0;
+public static final int colorAccent_COLOR = 1;
+public static final int violet_COLOR = 2;
+public static final int GREEN_COLOR = 3;
+public static final int RED_COLOR = 4; 
+```
+##### 在NotePadProvider.java中修改创建数据库的语句
+```
+NotePad.Notes.COLUMN_NAME_BACK_COLOR + " INTEGER"
+```
+##### 实例化和设置静态对象的块
+```
+static{
+    sNotesProjectionMap.put(
+        NotePad.Notes.COLUMN_NAME_BACK_COLOR,
+        NotePad.Notes.COLUMN_NAME_BACK_COLOR);
+}
+```
+##### 增加创建新笔记时需要执行的语句，给每条笔记设置默认背景颜色
+```
+if (values.containsKey(NotePad.Notes.COLUMN_NAME_BACK_COLOR) == false) {
+    values.put(NotePad.Notes.COLUMN_NAME_BACK_COLOR, NotePad.Notes.DEFAULT_COLOR);
+}
+```
+##### 在NoteList和NoteSearch中的PROJECTION添加color属性
+```
+NotePad.Notes.COLUMN_NAME_BACK_COLOR,
+```
+##### 使用bindView将颜色填充到ListView。新建一个MyCursorAdapter继承SimpleCursorAdapter
+```
+public class MyCursorAdapter extends SimpleCursorAdapter {
+    public MyCursorAdapter(Context context, int layout, Cursor c,
+                        String[] from, int[] to) {
+        super(context, layout, c, from, to);
+    }
+    @Override
+    public void bindView(View view, Context context, Cursor cursor){
+        super.bindView(view, context, cursor);
+        int x = cursor.getInt(cursor.getColumnIndex(NotePad.Notes.COLUMN_NAME_BACK_COLOR));
+        switch (x){
+            case NotePad.Notes.DEFAULT_COLOR:
+                view.setBackgroundColor(Color.rgb(255, 255, 255));
+                break;
+            case NotePad.Notes.YELLOW_COLOR:
+                view.setBackgroundColor(Color.rgb(247, 216, 133));
+                break;
+            case NotePad.Notes.BLUE_COLOR:
+                view.setBackgroundColor(Color.rgb(165, 202, 237));
+                break;
+            case NotePad.Notes.GREEN_COLOR:
+                view.setBackgroundColor(Color.rgb(161, 214, 174));
+                break;
+            case NotePad.Notes.RED_COLOR:
+                view.setBackgroundColor(Color.rgb(244, 149, 133));
+                break;
+            default:
+                view.setBackgroundColor(Color.rgb(255, 255, 255));
+                break;
+        }
+    }
+}
+```
+##### 将NoteList和NoteSearch里的适配器改为MyCursorAdapter
+```
+MyCursorAdapter adapter
+    = new MyCursorAdapter(
+              this,
+              R.layout.noteslist_item,
+              cursor, 
+              dataColumns,
+              viewIDs
+      );
+```
+##### 新建colors.xml和color_select.xml
+```
+<resources>
+    <color name="color1">#be96df</color>
+</resources>
+```
+```
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:drawable="@color/color1"
+    android:state_pressed="true"/>
+</selector>
+```
+##### 在notelist_item.xml里为控件添加选择器
+```
+android:background="@drawable/color_select"
+```
+### 实验截图
+![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201221012418.png)
+![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201221012706.png)
