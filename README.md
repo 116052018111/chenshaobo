@@ -1,5 +1,5 @@
 
-## 时间戳
+## 一、时间戳
 ### 关键代码
 ##### 在noteslist_item.xml中加入一个TextView
 ```
@@ -32,7 +32,7 @@ int[] viewIDs = { android.R.id.text1, android.R.id.text2 }
 ![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220014232.png)
 ![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220014328.png)
 
-## 笔记查询
+## 二、笔记查询
 ### 关键代码
 ##### 添加搜索图标
 ```
@@ -142,7 +142,7 @@ public class NoteSearch extends Activity implements SearchView.OnQueryTextListen
 ![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220212508.png)
 ![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220212613.png)
 
-## UI界面美化and更换背景颜色
+## 三四、UI界面美化and更换背景颜色
 ### 关键代码
 ##### NotePad.java 中设置颜色编号
 ```
