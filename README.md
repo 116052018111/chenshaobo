@@ -1,4 +1,4 @@
-# chenshaobo
+
 ## 时间戳
 ### 关键代码
 ##### 在noteslist_item.xml中加入一个TextView
@@ -29,4 +29,115 @@ NotePad.Notes.COLUMN_NAME_MODIFICATION_DATE
 int[] viewIDs = { android.R.id.text1, android.R.id.text2 }
 ```
 ### 实验截图
-！[image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220014232.png)
+![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220014232.png)
+![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220014328.png)
+
+## 笔记查询
+### 关键代码
+##### 添加搜索图标
+```
+<item
+        android:id="@+id/menu_search"
+        android:icon="@android:drawable/ic_search_category_default"
+        android:showAsAction="always"
+        android:title="search">
+    </item>
+```
+##### 添加menu_search图标的点击选择事件
+```
+case R.id.menu_search:
+                Intent intent = new Intent();
+                intent.setClass(this, NoteSearch.class);
+                this.startActivity(intent);
+                return true;
+```
+##### 添加note_search.xml活动
+```
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <SearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:iconifiedByDefault="false"
+        android:queryHint="搜索">
+    </SearchView>
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+    </ListView>
+</LinearLayout>
+```
+##### 添加NoteSearch活动
+```
+public class NoteSearch extends Activity implements SearchView.OnQueryTextListener{
+    ListView listview;//
+    SQLiteDatabase sqLiteDatabase;
+    private static final String[] PROJECTION = new String[] {
+            NotePad.Notes._ID, // 0
+            NotePad.Notes.COLUMN_NAME_TITLE, // 1
+            NotePad.Notes.COLUMN_NAME_MODIFICATION_DATE // 修改时间
+    };
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);//设置全屏显示
+        super.setContentView(R.layout.note_search);
+        Intent intent = getIntent();
+        if (intent.getData() == null) {
+            intent.setData(NotePad.Notes.CONTENT_URI);
+        }
+        listview= (ListView) findViewById(R.id.list_view);//获取listview
+        sqLiteDatabase=new NotePadProvider.DatabaseHelper(this).getReadableDatabase();//对数据库进行操作
+        SearchView search= (SearchView) findViewById(R.id.search_view);//获取搜索视图
+        search.setOnQueryTextListener(NoteSearch.this);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {//为每个item添加点击事件，点击可以查看笔记具体内容
+                Uri uri = ContentUris.withAppendedId(getIntent().getData(), l);
+                String action = getIntent().getAction();
+                if (Intent.ACTION_PICK.equals(action) || Intent.ACTION_GET_CONTENT.equals(action)) {
+                    setResult(RESULT_OK, new Intent().setData(uri));
+                } else {
+                    startActivity(new Intent(Intent.ACTION_EDIT, uri));
+                }
+            }
+        });
+    }
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return true;
+    }
+    @Override
+    public boolean onQueryTextChange(String newText) {//实现模糊查询，通过标题或者内容进行查询
+        Cursor cursor=sqLiteDatabase.query(
+                NotePad.Notes.TABLE_NAME,
+                PROJECTION,
+                NotePad.Notes.COLUMN_NAME_TITLE+" like ? or "+NotePad.Notes.COLUMN_NAME_NOTE+" like ?",
+                new String[]{"%"+newText+"%","%"+newText+"%"},
+                null,
+                null,
+                NotePad.Notes.DEFAULT_SORT_ORDER);
+        int[] viewIDs = { android.R.id.text1,android.R.id.text2};
+        SimpleCursorAdapter adapter
+                = new SimpleCursorAdapter(
+                NoteSearch.this,                             
+                R.layout.noteslist_item.xml,          
+                cursor,                           
+                new String[]{NotePad.Notes.COLUMN_NAME_TITLE,NotePad.Notes.COLUMN_NAME_MODIFICATION_DATE},
+                viewIDs
+        );
+        listview.setAdapter(adapter);
+        return true;
+    }
+}
+```
+### 实验截图
+![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220212453.png)
+![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220212508.png)
+![image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220212613.png)
