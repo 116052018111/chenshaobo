@@ -1,6 +1,6 @@
 # chenshaobo
 ## 时间戳
-### 代码
+### 关键代码
 ##### 在noteslist_item.xml中加入一个TextView
 ```
 <TextView
@@ -29,4 +29,4 @@ NotePad.Notes.COLUMN_NAME_MODIFICATION_DATE
 int[] viewIDs = { android.R.id.text1, android.R.id.text2 }
 ```
 ### 实验截图
-
+！[image](https://github.com/116052018111/chenshaobo/blob/master/QQ20201220014232.png)
