@@ -118,7 +118,7 @@ public class NoteSearch extends Activity implements SearchView.OnQueryTextListen
         Cursor cursor=sqLiteDatabase.query(
                 NotePad.Notes.TABLE_NAME,
                 PROJECTION,
-                NotePad.Notes.COLUMN_NAME_TITLE+" like ? or "+NotePad.Notes.COLUMN_NAME_NOTE+" like ?",
+                NotePad.Notes.COLUMN_NAME_TITLE+" like ? ",
                 new String[]{"%"+newText+"%","%"+newText+"%"},
                 null,
                 null,
